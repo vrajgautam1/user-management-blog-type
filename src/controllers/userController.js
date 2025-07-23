@@ -1,4 +1,8 @@
-const { signinSchema, signupSchema } = require("../validations/userValidation");
+const {
+  signinSchema,
+  signupSchema,
+  deleteSchema,
+} = require("../validations/userValidation");
 const db = require("../models");
 const { where } = require("sequelize");
 const User = db.Users;
@@ -9,16 +13,16 @@ require("dotenv").config();
 const secret = process.env.JWT_SECRET;
 
 module.exports.signup = async (req, res) => {
+  //data validation - using joi
+  const { error } = signupSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.message });
+  }
+  
   try {
-    //data validation - using joi
-    const { error } = signupSchema.validate(req.body);
-
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    }
-
     //build logic
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     // 1 - check existing user using their email
     const userExists = await User.findOne({
@@ -34,7 +38,6 @@ module.exports.signup = async (req, res) => {
       name: name,
       email: email,
       password: encryptedPassword,
-      role: role,
     });
 
     //3 - Allow registered users to log in immediately after successful signup.
@@ -64,7 +67,8 @@ module.exports.signin = async (req, res) => {
     }
 
     //1 - extract email and password from req.body
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    password = password.trim();
 
     //2 - check if the user exists
     const userFound = await User.findOne({
@@ -78,7 +82,7 @@ module.exports.signin = async (req, res) => {
     }
 
     //3 - check the password
-    const passwordCorrect = bcrypt.compare(password, userFound.password);
+    const passwordCorrect = await bcrypt.compare(password, userFound.password);
 
     if (!passwordCorrect) {
       return res.status(400).json({ error: "password is incorrect" });
@@ -100,17 +104,52 @@ module.exports.signin = async (req, res) => {
 };
 
 module.exports.userOnlyAccessible = (req, res) => {
-  return res
-    .status(200)
-    .json({
-      success: "we are currently successfully able to access user only data",
-    });
+  return res.status(200).json({
+    success: "we are currently successfully able to access user only data",
+  });
 };
 
 module.exports.adminOnlyAccessible = (req, res) => {
+  return res.status(200).json({
+    success: "we are currently successfully able to access admin only data",
+  });
+};
+
+module.exports.viewProfile = async (req, res) => {
+  const { id } = req.params; //we can do it in different ways. i chose this for no specific reason
+
+  //1 - check if the user exists.
+  const userExists = await User.findOne({
+    where: { id: id },
+  });
+
+  if (!userExists) {
+    return res.status(400).json({ error: "user does not exist" });
+  }
+
+  //2 - return the user
   return res
     .status(200)
-    .json({
-      success: "we are currently successfully able to access admin only data",
-    });
+    .json({ success: "viewing user data", data: userExists });
+};
+
+module.exports.deleteProfile = async (req, res) => {
+  const { error } = deleteSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.message });
+  }
+
+  const { id } = req.params; //we can do it in different ways. i chose this for no specific reason
+
+  //1 - check if the user exists.
+  const userDeleted = await User.destroy({
+    where: { id: id },
+  });
+
+  if (!userDeleted) {
+    return res.status(400).json({ error: "user does not exist" });
+  }
+
+  return res.status(200).json({ success: "user Deleted", data: userDeleted });
 };
