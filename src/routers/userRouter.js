@@ -8,8 +8,8 @@ router.post("/signup", userController.signup)
 // router.post("/signin")
 
 router.use(auth)
-
-
+router.get("/viewProfile", userController.viewProfile)
+router.delete("/deleteProfile", userController.deleteProfile)
 
 router.use(checkrole("admin"))
 router.get("/adminOnly", userController.adminOnlyAccessible)
@@ -17,5 +17,5 @@ router.get("/adminOnly", userController.adminOnlyAccessible)
 router.use(checkrole("user"))
 router.get("/userOnly", userController.userOnlyAccessible)
 
-
 module.exports = router
+
