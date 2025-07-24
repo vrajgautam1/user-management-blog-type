@@ -17,6 +17,7 @@ module.exports = (sequelize, datatypes)=>{
         type:{
             type: datatypes.STRING,
             allowNull: false,
+            defaultValue: "general",
             validate: {
                 isIn: [["profile", "cover", "general"]]
             }

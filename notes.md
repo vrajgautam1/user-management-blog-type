@@ -70,4 +70,19 @@ users.associate = (models)=>{
       })
 }
 
-sequelize-cli looks for the config file in the root folder. keep the config folder in the root folder. njjnjjjj  j jj j j 
+sequelize-cli looks for the config file in the root folder. keep the config folder in the root folder.
+
+now who should upload the files? only the logged in users. so that gives us the userId. usually its present in the req.user.id (a concept of token and jwt)
+
+then i also want the type to be general by default so i modified the uploads model 
+
+type:{
+            type: datatypes.STRING,
+            allowNull: false,
+            defaultValue: "general",
+            validate: {
+                isIn: [["profile", "cover", "general"]]
+            }
+        }
+
+now the main hero of the show. being able to insert all that data 
