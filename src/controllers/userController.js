@@ -90,7 +90,7 @@ module.exports.signin = async (req, res) => {
 
     //4 - jwt token generation
     const token = jwt.sign(
-      { email: userFound.email, role: userFound.email },
+      { email: userFound.email, role: userFound.role, id: userFound.id },
       secret,
       { expiresIn: "1h" }
     );

@@ -7,8 +7,9 @@ const storage = multer.diskStorage({
   },
 
   filename: function (req, file, cb) {
-    console.log(file);
-    cb(null, Date.now() + "-" + path.basename(file.originalname));
+    console.log(file.originalname)
+    const{id} = req.user
+    cb(null, id+"-"+Date.now() + "-" + path.basename(file.originalname));
   },
 });
 
@@ -16,7 +17,7 @@ function fileFilter(req, file, cb) {
   const allowedTypes = [".pdf", ".jpg", ".jpeg", ".png"];
   const ext = path.extname(file.originalname).toLowerCase();
   if (!allowedTypes.includes(ext)) {
-    return cb(new Error("Only pdf files are allowed"));
+    return cb(new Error("Only pdf, jpg, jpeg and png files are allowed"));
   }
   cb(null, true); // allow file
 }
@@ -48,11 +49,6 @@ function uploadsMiddleware(req, res, next) {
     }else if(err instanceof Error){
       return res.status(400).json({error: err.message})
     } 
-    else {
-      return res
-        .status(500)
-        .json({ error: "Something went wrong during upload." });
-    }
     next();
   });
 }
