@@ -70,4 +70,4 @@ users.associate = (models)=>{
       })
 }
 
-sequelize-cli looks for the config file in the root folder. keep the config folder in the root folder. njjnjj
+sequelize-cli looks for the config file in the root folder. keep the config folder in the root folder. njjnjjjj  j jj j j 
