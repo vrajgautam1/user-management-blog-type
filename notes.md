@@ -8,7 +8,7 @@
 
 phase - 1 : normal uploads - path.join(__dirname, "..", "uploads")
 1.2 : multiple file uploads
-// limits { files: 5 }
+// limits { files: 5, fileSize: 5 * 1024 * 1024 } //give the washing machine example 
 // .array("files", 5) — without this, upload won’t be considered a function
 
 1.3 : handling errors for multiple files
@@ -46,3 +46,28 @@ If extension not in list → cb(new Error("Only pdf files are allowed"))
 This error will be caught as a normal Error in the upload callback
 
 phase - 2 : binding images to the user. - pending
+
+the model contains
+id, userid, originalname, filename, url, path, size
+
+userid is a foreigkey, its value will come from users table therefore we must use a property called
+references: {
+    model: modelname
+    key: column name
+}
+
+then there's associations - uploads.associate = (models)=>{
+  Uploads.belongsTo(models.users, {
+    foreignKey: "userId",
+    onDelete: "CASCADE
+  })
+}
+
+users.associate = (models)=>{
+  Users.hasMany(models.uploads, {
+    foreignKey: "userId",
+    onDelete: "CASCADE"
+      })
+}
+
+sequelize-cli looks for the config file in the root folder. keep the config folder in the root folder. 

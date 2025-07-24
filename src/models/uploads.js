@@ -1,5 +1,3 @@
-const { allow } = require("joi")
-
 module.exports = (sequelize, datatypes)=>{
     const Uploads = sequelize.define("uploads", {
         id:{
@@ -39,4 +37,13 @@ module.exports = (sequelize, datatypes)=>{
     },{
         timestamps: true
     })
+
+    Uploads.associate = (models)=>{
+        Uploads.belongsTo(models.Users, {
+            foreignKey: "userId",
+            onDelete: "CASCADE"
+        })
+    }
+
+    return Uploads
 }

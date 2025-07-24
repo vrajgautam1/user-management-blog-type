@@ -27,5 +27,13 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true
   });
 
+
+  Users.associate = (models)=>{
+    Users.hasMany(models.uploads, {
+      foreignKey:"userId",
+      onDelete: "CASCADE"
+    })
+  }
+
   return Users;
 };
