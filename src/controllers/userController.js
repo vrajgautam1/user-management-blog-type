@@ -41,7 +41,7 @@ module.exports.signup = async (req, res) => {
     });
 
     //3 - Allow registered users to log in immediately after successful signup.
-    const token = jwt.sign({ email: email, role: newuser.role }, secret, {
+    const token = jwt.sign({ email: email, role: newuser.role, id: newuser.id }, secret, {
       expiresIn: "1h",
     });
 
